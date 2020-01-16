@@ -1,7 +1,12 @@
 {
   "name": "react-reqq",
   "version": "0.1.0",
-  "private": true,
+  "private": false,
+  "babel": {
+    "presets": [
+      "@babel/preset-react"
+    ]
+  },
   "dependencies": {
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
@@ -11,6 +16,7 @@
     "react-scripts": "3.3.0"
   },
   "scripts": {
+    "publish:npm": "rm -rf dist && mkdir dist &&  babel src/api -d dist --copy-files",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
@@ -30,5 +36,9 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.8.3",
+    "@babel/preset-react": "^7.8.3"
   }
 }

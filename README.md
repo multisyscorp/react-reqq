@@ -1,68 +1,142 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Description
+Easy REDUX/EPICS redux setup for react.
+## Installation
+### `yarn add react-reqq`
+*its not a typo, its just thicc*
 
-## Available Scripts
+## Setup
+### Provider Setup
+~~~~
+import { configureApi } from 'react-reqq';
 
-In the project directory, you can run:
+export const store = configureApi({
+  endpoint: process.env.REACT_APP_END_POINT,
+});
 
-### `yarn start`
+<Provider store={store}>
+  ...
+</Provider>
+~~~~
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+### Import `req`
+~~~~
+import { req } from 'react-reqq`
+~~~~
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+### GET
+~~~~
+req.get({
+  key: 'foo',
+  url: '/users',
+  params: {
+    q: 'juan',
+  }
+});
+~~~~
 
-### `yarn test`
+### How to get the data
+~~~~
+const data = useSelector((state) => state.api.foo);
+~~~~
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### POST
+~~~~
+req.post({
+  key: 'foo',
+  url: '/users',
+  payload: {
+    name: 'juan',
+  }
+});
+~~~~
 
-### `yarn build`
+### PUT
+~~~~
+req.put({
+  key: 'foo',
+  url: '/users/1',
+  payload: {
+    name: 'juan',
+  }
+});
+~~~~
 
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### REMOVE
+~~~~
+req.remove({
+  key: 'foo',
+  url: '/users/1'
+});
+~~~~
 
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
+### SET
+~~~~
+req.set('isFoo', true);
+~~~~
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### LIST/SHOW
+*must have `id` property in the response*
+~~~~
+req.list({
+  key: 'foo',
+  url: '/users',
+  transform: res => ({
+    data: res.users,      // array
+    meta: res.pagination, // for pagination *optional for pager
+  }),
+});
+req.show({
+  key: 'foo',
+  url: '/users/1'
+  id: 1,
+});
+~~~~
 
-### `yarn eject`
+### React Hooks Helpers
+useApiLoading(`key`, `get|post|put|remove|list|?id`)
+~~~~
+import { useApiLoading } from 'api/hooks';
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+const isLoading = useApiLoading('foo', 'get');
+~~~~
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+useApiList(`key`)
+~~~~
+const [list, pager] = useApiList('foo');
+~~~~
 
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+### When to use LIST+SHOW instead of GET
+Use `.list`+`.show` for data with `id`, `.show` updates the `.list` item if `id` is found in `.list`'s response.
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+### Other
+#### configureApi
+* endpoint [string] - Root endpoint [*http://localhost:8000*]
+* requestHeaders [function] - Set headers on request.
+* onError [function] - When an error occured during request.
 
-## Learn More
+#### GET | POST | PUT | REMOVE | LIST | SHOW
+~~~~
+  req.get({
+    ...
+    // Calls on success response
+    onSuccess: () => { ... },
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+    // Calls on error response
+    onError: () => { ... },
+  });
+~~~~
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+#### GET | LIST | SHOW
+~~~~
+  req.get({
+    ...
+    // Transforms response before storing
+    transform: () => {
+      // transform data here
+      return { ... };
+    },
 
-### Code Splitting
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
-
-### Analyzing the Bundle Size
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `yarn build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+    // Cache response to local storage. `false` clears cache
+    cache: true,
+  });
+~~~~
