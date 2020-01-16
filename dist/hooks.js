@@ -18,7 +18,7 @@ export const useApiLoading = (key, types) => {
     }
 
     setIsLoading(newLoading);
-  }, [loader]);
+  }, [loader, types]);
   return isLoading;
 };
 export const useApiList = key => {
