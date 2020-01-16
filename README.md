@@ -95,14 +95,23 @@ req.show({
 ### React Hooks Helpers
 useApiLoading(`key`, `get|post|put|remove|list|?id`)
 ~~~~
-import { useApiLoading } from 'api/hooks';
+import { useApiLoading } from 'react-reqq';
 
 const isLoading = useApiLoading('foo', 'get');
 ~~~~
 
 useApiList(`key`)
 ~~~~
+import { useApiList } from 'react-reqq';
+
 const [list, pager] = useApiList('foo');
+~~~~
+
+useApiShow(`key`, `id`)
+~~~~
+import { useApiShow } from 'react-reqq';
+
+const data = useApiShow('foo', '1');
 ~~~~
 
 ### When to use LIST+SHOW instead of GET

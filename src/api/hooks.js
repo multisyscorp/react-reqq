@@ -16,7 +16,7 @@ export const useApiLoading = (key, types) => {
       if (loader[types]) newLoading = true;
     }
     setIsLoading(newLoading);
-  }, [loader]);
+  }, [loader, types]);
   return isLoading;
 };
 

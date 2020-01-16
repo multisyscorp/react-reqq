@@ -1,9 +1,10 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
-import { req } from './api';
+import { req, useApiLoading } from './api';
 
 function App() {
+  const isLoading = useApiLoading('test', 'get');
   React.useEffect(() => {
     req.get({
       key: 'test',
@@ -15,16 +16,8 @@ function App() {
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <p>
-          Edit <code>src/App.js</code> and save to reload.
+          {isLoading ? 'Loading...' : 'Testing'}
         </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
       </header>
     </div>
   );
