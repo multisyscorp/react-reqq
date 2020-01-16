@@ -6,7 +6,9 @@ import * as serviceWorker from './serviceWorker';
 import { Provider } from 'react-redux';
 import { configureApi } from './api';
 
-const store = configureApi({});
+const store = configureApi({
+  endpoint: 'http://localhost:8000',
+});
 
 ReactDOM.render(
   <Provider store={store}>

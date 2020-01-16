@@ -7,7 +7,7 @@ function App() {
   React.useEffect(() => {
     req.get({
       key: 'test',
-      url: '/test',
+      url: '/foo',
     });
   }, []);
   return (
