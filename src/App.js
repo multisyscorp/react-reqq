@@ -1,8 +1,15 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
+import { req } from './api';
 
 function App() {
+  React.useEffect(() => {
+    req.get({
+      key: 'test',
+      url: '/test',
+    });
+  }, []);
   return (
     <div className="App">
       <header className="App-header">
