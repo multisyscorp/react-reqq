@@ -6,6 +6,7 @@ import {
   useApiLoading,
   useApiList,
   useApiShow,
+  useApiGet,
 } from './hooks';
 
 let SETTINGS = {
@@ -26,6 +27,7 @@ export {
   useApiLoading,
   useApiList,
   useApiShow,
+  useApiGet,
   SETTINGS,
   configureApi,
   req,

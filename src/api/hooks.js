@@ -34,3 +34,8 @@ export const useApiShow = (key, id) => {
   const selected = useSelector((state) => _.get(state, `api.${key}.raw.${id}`) || {}, shallowEqual);
   return selected;
 };
+
+export const useApiGet = (key, default_value = {}) => {
+  const selected = useSelector((state) => _.get(state, `api.${key}`) || default_value, shallowEqual);
+  return selected;
+};

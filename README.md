@@ -1,5 +1,5 @@
 ## Description
-Easy REDUX/EPICS redux setup for react.
+Easy redux setup for react.
 ## Installation
 ### `yarn add react-reqq`
 *its not a typo, its just thicc*
@@ -13,6 +13,7 @@ export const store = configureApi({
   endpoint: process.env.REACT_APP_END_POINT,
 });
 
+// import { Provider } from 'react-redux';
 <Provider store={store}>
   ...
 </Provider>
@@ -35,7 +36,10 @@ req.get({
 ~~~~
 
 ### How to get the data
+`useSelector` of `react-redux` or use the `helpers` *see below.
 ~~~~
+import { useSelector } from 'react-redux';
+
 const data = useSelector((state) => state.api.foo);
 ~~~~
 
@@ -93,6 +97,12 @@ req.show({
 ~~~~
 
 ### React Hooks Helpers
+useApiShow(`key`, `id`)
+~~~~
+import { useApiShow } from 'react-reqq';
+
+const data = useApiShow('foo', '1');
+~~~~
 useApiLoading(`key`, `get|post|put|remove|list|?id`)
 ~~~~
 import { useApiLoading } from 'react-reqq';
