@@ -3,7 +3,7 @@
 /* eslint-disable import/no-cycle */
 import configureStore from './store/setup';
 import * as req from './src/actions';
-import { useApiLoading, useApiList, useApiShow } from './hooks';
+import { useApiLoading, useApiList, useApiShow, useApiGet } from './hooks';
 let SETTINGS = {
   endpoint: 'http://127.0.0.1:8000',
   requestHeaders: () => ({}),
@@ -19,4 +19,4 @@ const configureApi = options => {
   return store;
 };
 
-export { useApiLoading, useApiList, useApiShow, SETTINGS, configureApi, req, store };
+export { useApiLoading, useApiList, useApiShow, useApiGet, SETTINGS, configureApi, req, store };
