@@ -1,6 +1,6 @@
 {
   "name": "react-reqq",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "private": false,
   "main": "dist/index.js",
   "babel": {
@@ -26,14 +26,6 @@
     "css-loader": "3.2.0",
     "dotenv": "8.2.0",
     "dotenv-expand": "5.1.0",
-    "eslint": "^6.6.0",
-    "eslint-config-react-app": "^5.1.0",
-    "eslint-loader": "3.0.2",
-    "eslint-plugin-flowtype": "3.13.0",
-    "eslint-plugin-import": "2.18.2",
-    "eslint-plugin-jsx-a11y": "6.2.3",
-    "eslint-plugin-react": "7.16.0",
-    "eslint-plugin-react-hooks": "^1.6.1",
     "file-loader": "4.3.0",
     "fs-extra": "^8.1.0",
     "html-webpack-plugin": "4.0.0-beta.5",
@@ -67,11 +59,7 @@
     "style-loader": "1.0.0",
     "terser-webpack-plugin": "2.2.1",
     "ts-pnp": "1.1.5",
-    "url-loader": "2.3.0",
-    "webpack": "4.41.2",
-    "webpack-dev-server": "3.9.0",
-    "webpack-manifest-plugin": "2.2.0",
-    "workbox-webpack-plugin": "4.3.1"
+    "url-loader": "2.3.0"
   },
   "scripts": {
     "publish:npm": "rm -rf dist && mkdir dist &&  babel src/api -d dist --copy-files",
@@ -97,7 +85,19 @@
   },
   "devDependencies": {
     "@babel/cli": "^7.8.3",
-    "@babel/preset-react": "^7.8.3"
+    "@babel/preset-react": "^7.8.3",
+    "webpack": "4.41.2",
+    "webpack-dev-server": "3.9.0",
+    "webpack-manifest-plugin": "2.2.0",
+    "workbox-webpack-plugin": "4.3.1",
+    "eslint": "^6.6.0",
+    "eslint-config-react-app": "^5.1.0",
+    "eslint-loader": "3.0.2",
+    "eslint-plugin-flowtype": "3.13.0",
+    "eslint-plugin-import": "2.18.2",
+    "eslint-plugin-jsx-a11y": "6.2.3",
+    "eslint-plugin-react": "7.16.0",
+    "eslint-plugin-react-hooks": "^1.6.1"
   },
   "jest": {
     "roots": [
