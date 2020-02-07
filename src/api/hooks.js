@@ -22,11 +22,11 @@ export const useApiLoading = (key, types) => {
 
 export const useApiList = (key) => {
   const list = useSelector((state) => _.get(state, `api.${key}.list`) || [], shallowEqual);
-  const pager = useSelector((state) => _.get(state, `api.${key}.pager`) || {}, shallowEqual);
+  const meta = useSelector((state) => _.get(state, `api.${key}.meta`) || {}, shallowEqual);
   const raw = useSelector((state) => _.get(state, `api.${key}.raw`) || {}, shallowEqual);
   return [
     list.map((x) => raw[x]),
-    pager,
+    meta,
   ];
 };
 

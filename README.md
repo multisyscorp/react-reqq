@@ -86,7 +86,7 @@ req.list({
   url: '/users',
   transform: res => ({
     data: res.users,      // array
-    meta: res.pagination, // for pagination *optional for pager
+    meta: res.meta, // for pagination *optional for meta
   }),
 });
 req.show({
@@ -114,7 +114,7 @@ useApiList(`key`)
 ~~~~
 import { useApiList } from 'react-reqq';
 
-const [list, pager] = useApiList('foo');
+const [list, meta] = useApiList('foo');
 ~~~~
 
 useApiShow(`key`, `id`)

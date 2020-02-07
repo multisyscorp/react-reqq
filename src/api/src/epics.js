@@ -27,8 +27,14 @@ const cancelOngoing = (req) => {
   return req;
 };
 
+const transformParams = (params) => {
+  if (typeof params === 'function') return params(store.getState().api);
+  return params;
+}
+
 const checkCache = (req) => new Promise((resolve) => {
-  const _cacheKey = `|${req.url}|${md5(qs(req.options.params))}`;
+  const params = transformParams(_.get(req, 'options.params') || {});
+  const _cacheKey = `|${req.url}|${md5(qs(params))}`;
   store.dispatch({ type: _cacheKey });
   if (_.get(req, 'options.cache')) {
     storage.getItem(_cacheKey, (err, value) => {
@@ -61,7 +67,7 @@ const _list = (action$) => action$
       if (options.cache && !!_cache) {
         return new Promise((r) => r(actions.gotList(key, options)(_cache)));
       }
-      return services.get(url, options.params || {})
+      return services.get(url, transformParams(options.params || {}))
         .pipe(
           map(updateCache(_cacheKey)),
           map(actions.gotList(key, options)),
@@ -83,7 +89,7 @@ const _get = (action$) => action$
       if (options.cache && !!_cache) {
         return new Promise((r) => r(actions.gotSet(key, options)(_cache)));
       }
-      return services.get(url, options.params || {})
+      return services.get(url, transformParams(options.params || {}))
         .pipe(
           map(updateCache(_cacheKey)),
           map(actions.gotSet(key, options)),
@@ -105,7 +111,7 @@ const _show = (action$) => action$
       if (options.cache && !!_cache) {
         return new Promise((r) => r(actions.gotShow(key, id, options)(_cache)));
       }
-      return services.get(url, options.params || {})
+      return services.get(url, transformParams(options.params || {}))
         .pipe(
           map(updateCache(_cacheKey)),
           map(actions.gotShow(key, id, options)),

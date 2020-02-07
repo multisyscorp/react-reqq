@@ -49,13 +49,13 @@ const formatList = (state, res) => {
   };
   const data = Array.isArray(res) ? res : (Array.isArray(res.data) ? res.data : []);
   const list = data.map((x) => `${x.id}`); // Object.keys(raw);
-  const pager = _.get(res, 'meta') || state.pager || {};
+  const meta = _.get(res, 'meta') || state.meta || {};
   // .map(k => newRaw[k]);
   return {
     ...state,
     raw: newRaw,
     list,
-    pager,
+    meta,
   };
 };
 
@@ -170,7 +170,7 @@ export default {
       ..._.get(state, `${action.key}`) || {},
       selected: action.id,
     },
-  }, action, action.id),
+  }, action, action.id || 'show'),
   [c.SELECT_ID]: (state, action) => ({
     ...state,
     [action.key]: {
@@ -181,7 +181,7 @@ export default {
   [c.GOT_SHOW]: (state, action) => endLoading({
     ...state,
     [action.key]: formatShow(state[action.key] || {}, action.res),
-  }, action, action.id),
+  }, action, action.id || 'show'),
   [c.GOT_ERROR]: (state, action) => ({
     ...state,
     _loading: {
