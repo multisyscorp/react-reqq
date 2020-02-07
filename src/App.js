@@ -18,10 +18,11 @@ const useApiState = (transform) => {
 
 const useApiState2 = (transform, deps) => {
   const raw = useSelector((state) => {
-    return {
-      _loading: _.pick(state.api._loading, deps),
+    const newState = {
+      // _loading: _.pick(state.api._loading, deps),
       ..._.pick(state.api, deps),
     };
+    return newState;
   }, shallowEqual);
   return transform(raw);
 };
@@ -78,7 +79,7 @@ const List = ({
       transform: (res, state) => {
         const page = apiGet(state, 'filter', {}).page || 1;
         return {
-          data: (res.results || []).map((x, i) => ({ ...x, id: (i + 1) * page })),
+          data: (res.results || []).map((x, i) => ({ ...x, id: (i + 1) + (page * 10) })),
           meta: {
             current: page,
             total: res.count,
@@ -107,9 +108,9 @@ const List = ({
     updateList();
   }, []);
   // console.log(data, isLoading); // eslint-disable-line
-  console.log('render list!');
+  console.log('LIST 1');
   return (
-    <>
+    <div style={{ height: 320 }}>
       {pager.total_pages > 1 && (
         <div>
           <button disabled={isLoading} onClick={handlePrev}>Prev</button>
@@ -122,7 +123,7 @@ const List = ({
           <a href="/" onClick={handleSelect(item)}>{item.name}</a>
         </div>
       ))}
-      </>
+    </div>
   );
 };
 
@@ -161,7 +162,7 @@ const Selected = React.memo(({
   //   if (!id) return;
 
   // }, [id]);
-  console.log('render show!');
+  console.log('SHOW 1');
   return (
     <div>
       <button disabled={isLoading} onClick={updateItem} type="button">{data.name || '- no selected -'}</button>
@@ -187,6 +188,7 @@ const Other = React.memo(() => {
   const { data } = useApiState2(state => ({
     data: apiGet(state, 'other', {}),
   }), ['other'])
+  const isLoading = useApiLoading('other', 'get');
   // const data = useApiGet('other', {});
   const getRandom = () => {
     req.get({
@@ -194,29 +196,72 @@ const Other = React.memo(() => {
       url: () => `https://swapi.co/api/people/${getRandomInt(1, 87)}`,
     });
   };
-  console.log('render other!');
+  console.log('OTHER');
   return (
     <div>
-      <div>GOT: {data.name || '-'}</div>
-      <button onClick={getRandom}type="button">Get Random</button>
+      <div>{data.name || '-'}</div>
+      <button onClick={getRandom}type="button" disabled={isLoading}>Get Random</button>
     </div>
   );
 });
 
 function App() {
+  return (
+    <div className="App">
+      <header className="App-header">
+        <Other />
+        {/* <img src={logo} className="App-logo" alt="logo" /> */}
+        <hr />
+        <div style={{ display: 'flex' }}>
+          <div style={{ width: 600 }}>
+            TYPE A
+            <Crud />
+          </div>
+          <div style={{ width: 600 }}>
+            TYPE B
+            <Crud2 />
+          </div>
+        </div>
+      </header>
+    </div>
+  )
+}
+
+const Selected2 = () => {
+  return (
+    <div>select 2</div>
+  );
+}
+
+const List2 = () => {
+  return (
+    <div>list 2</div>
+  );
+}
+
+const Crud = () => {
   const [selected, setSelected] = React.useState({});
   const handleSelectRow = React.useCallback((row) => {
     setSelected(row);
   }, []);
   return (
-    <div className="App">
-      <header className="App-header">
-        <Other />
-        <img src={logo} className="App-logo" alt="logo" />
-        <Selected id={selected.id} />
-        <List onSelectRow={handleSelectRow} />
-      </header>
-    </div>
+    <>
+      <Selected id={selected.id} />
+      <List onSelectRow={handleSelectRow} />
+    </>
+  )
+}
+
+const Crud2 = () => {
+  const [selected, setSelected] = React.useState({});
+  const handleSelectRow = React.useCallback((row) => {
+    setSelected(row);
+  }, []);
+  return (
+    <>
+      <Selected2 id={selected.id} />
+      <List2 onSelectRow={handleSelectRow} />
+    </>
   )
 }
 
