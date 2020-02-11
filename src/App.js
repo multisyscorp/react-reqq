@@ -225,10 +225,13 @@ function App() {
               <Crud />
             </div>
           )}
-          <div style={{ width: 600 }}>
-            TYPE B
-            <Crud2 />
-          </div>
+          {false && (
+            <div style={{ width: 600 }}>
+              TYPE B
+              <Crud2 />
+            </div>
+          )}
+          <Tester />
         </div>
       </header>
     </div>
@@ -347,6 +350,46 @@ const Crud2 = () => {
       <List2 onSelectRow={handleSelectRow} />
     </>
   )
+}
+
+const Tester = () => {
+  const isGetLoading = useApiLoading('test-get', 'get');
+  const isShowLoading = useApiLoading('showlist', 'show');
+  const isListLoading = useApiLoading('showlist', 'list');
+  const handleTestGet = () => {
+    req.get({
+      key: 'test-get',
+      url: () => 'https://swapi.co/api/people',
+    });
+  };
+  const handleTestShow = () => {
+    req.show({
+      key: 'showlist',
+      url: () => 'https://swapi.co/api/people/1',
+      transform: (res) => {
+        return { ...res, id: 1 }
+      }
+    });
+  };
+  const handleTestList = () => {
+    req.list({
+      key: 'showlist',
+      url: () => 'https://swapi.co/api/people',
+      transform: (res) => {
+        return {
+          data: res.results.map((x, i) => ({ ...x, id: i + 1 })),
+        };
+      },
+    });
+  };
+  console.log('render!');
+  return (
+    <div>
+      <button type="button" disabled={isGetLoading} onClick={handleTestGet}>TEST GET</button>
+      <button type="button" disabled={isShowLoading} onClick={handleTestShow}>TEST SHOW</button>
+      <button type="button" disabled={isListLoading} onClick={handleTestList}>TEST LIST</button>
+    </div>
+  );
 }
 
 export default App;

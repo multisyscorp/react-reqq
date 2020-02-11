@@ -71,7 +71,7 @@ const _list = (action$) => action$
         .pipe(
           map(updateCache(_cacheKey)),
           map(actions.gotList(key, options)),
-          catchError(actions.gotError(x)),
+          catchError(actions.gotError(x, 'list')),
           takeUntil(action$.pipe(ofType('CANCEL'))),
           takeUntil(action$.pipe(ofType(_cacheKey))),
         );
@@ -93,7 +93,7 @@ const _get = (action$) => action$
         .pipe(
           map(updateCache(_cacheKey)),
           map(actions.gotSet(key, options)),
-          catchError(actions.gotError(x)),
+          catchError(actions.gotError(x, 'get')),
           takeUntil(action$.pipe(ofType('CANCEL'))),
           takeUntil(action$.pipe(ofType(_cacheKey))),
         );
@@ -115,7 +115,7 @@ const _show = (action$) => action$
         .pipe(
           map(updateCache(_cacheKey)),
           map(actions.gotShow(key, id, options)),
-          catchError(actions.gotError(x)),
+          catchError(actions.gotError(x, 'show')),
           takeUntil(action$.pipe(ofType('CANCEL'))),
           takeUntil(action$.pipe(ofType(_cacheKey))),
         );
@@ -133,7 +133,7 @@ const _post = (action$) => action$
       return services.post(url, payload || {})
         .pipe(
           map(actions.gotPost(key, options)),
-          catchError(actions.gotError(x)),
+          catchError(actions.gotError(x, 'post')),
           takeUntil(action$.pipe(ofType('CANCEL'))),
           takeUntil(action$.pipe(ofType(key))),
         );
@@ -151,7 +151,7 @@ const _put = (action$) => action$
       return services.put(url, payload || {})
         .pipe(
           map(actions.gotPut(key, options)),
-          catchError(actions.gotError(x)),
+          catchError(actions.gotError(x, 'put')),
           takeUntil(action$.pipe(ofType('CANCEL'))),
           takeUntil(action$.pipe(ofType(key))),
         );
@@ -169,7 +169,7 @@ const _remove = (action$) => action$
       return services.remove(url, payload || {})
         .pipe(
           map(actions.gotRemove(key, options)),
-          catchError(actions.gotError(x)),
+          catchError(actions.gotError(x, 'remove')),
           takeUntil(action$.pipe(ofType('CANCEL'))),
           takeUntil(action$.pipe(ofType(key))),
         );

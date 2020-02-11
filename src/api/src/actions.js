@@ -145,13 +145,14 @@ export const gotShow = (key, id, options) => (res) => {
   };
 };
 
-export const gotError = ({ key, options }) => (res) => new Promise((r) => {
+export const gotError = ({ key, options }, request_type) => (res) => new Promise((r) => {
   if (options.onError) options.onError(res);
   SETTINGS.onError(res);
   r({
     type: c.GOT_ERROR,
     key,
     error: res || {},
+    request_type,
   });
 });
 
