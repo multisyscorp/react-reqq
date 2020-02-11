@@ -5,16 +5,19 @@ import _ from 'lodash';
 import './App.css';
 import {
   req,
-  // useApiGet,
+  useApiGet,
+  useApiList,
+  useApiShow,
   useApiLoading,
-  // useApiList,
-  // useApiShow,
 } from './api';
 
 // const useApiState = (transform) => {
 //   const raw = useSelector(state => state.api, shallowEqual);
 //   return transform(raw);
 // }
+
+let renders_A = 0;
+let renders_B = 0;
 
 const useApiState = (transform, deps) => {
   const raw = useSelector((state) => {
@@ -108,7 +111,8 @@ const List = ({
     updateList();
   }, []);
   // console.log(data, isLoading); // eslint-disable-line
-  console.log('LIST 1');
+  renders_A += 1;
+  console.log(`<LIST A>${renders_A}`);
   return (
     <div style={{ height: 320 }}>
       {pager.total_pages > 1 && (
@@ -162,7 +166,8 @@ const Selected = React.memo(({
   //   if (!id) return;
 
   // }, [id]);
-  console.log('SHOW 1');
+  renders_A += 1;
+  console.log(`<SHOW A>${renders_A}`);
   return (
     <div>
       <button disabled={isLoading} onClick={updateItem} type="button">{data.name || '- no selected -'}</button>
@@ -206,6 +211,7 @@ const Other = React.memo(() => {
 });
 
 function App() {
+  // useSelector((state) => console.log(state));
   return (
     <div className="App">
       <header className="App-header">
@@ -213,10 +219,12 @@ function App() {
         {/* <img src={logo} className="App-logo" alt="logo" /> */}
         <hr />
         <div style={{ display: 'flex' }}>
-          <div style={{ width: 600 }}>
-            TYPE A
-            <Crud />
-          </div>
+          {false && (
+            <div style={{ width: 600 }}>
+              TYPE A
+              <Crud />
+            </div>
+          )}
           <div style={{ width: 600 }}>
             TYPE B
             <Crud2 />
@@ -227,13 +235,22 @@ function App() {
   )
 }
 
-const Selected2 = () => {
-  const isLoading = false;
+const Selected2 = ({ id }) => {
+  const isLoading = useApiLoading('test', 'show');
   const updateItem = () => {
-
+    req.show({
+      key: 'test',
+      url: () => `https://swapi.co/api/people/${id}`,
+      transform: (res) => {
+        return { ...res, id };
+      },
+    });
   }
-  const data = {};
-  console.log('SHOW 2');
+  const data = useApiShow('test', id);
+
+  renders_B += 1;
+  console.log(`<SHOW B>${renders_B}`);
+
   return (
     <div>
       <button disabled={isLoading} onClick={updateItem} type="button">{data.name || '- no selected -'}</button>
@@ -242,10 +259,9 @@ const Selected2 = () => {
 }
 
 const List2 = ({ onSelectRow }) => {
-  const isLoading = false;
-  const filter = {};
-  const pager = {};
-  const data = [];
+  const isLoading = useApiLoading('test', 'list');
+  const filter = useApiGet('filter', {});
+  const [data, pager] = useApiList('test');
 
   // ====START ACTIONS====
   const updateList = () => {
@@ -287,7 +303,8 @@ const List2 = ({ onSelectRow }) => {
   React.useEffect(() => {
     updateList();
   }, []);
-  console.log('LIST 2');
+  renders_B += 1;
+  console.log(`<LIST B>${renders_B}`);
   return (
     <div style={{ height: 320 }}>
       {pager.total_pages > 1 && (
