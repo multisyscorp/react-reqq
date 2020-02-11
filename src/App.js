@@ -1,22 +1,22 @@
 import React from 'react';
 import { useSelector, shallowEqual } from 'react-redux';
 import _ from 'lodash';
-import logo from './logo.svg';
+// import logo from './logo.svg';
 import './App.css';
 import {
   req,
-  useApiGet,
+  // useApiGet,
   useApiLoading,
-  useApiList,
-  useApiShow,
+  // useApiList,
+  // useApiShow,
 } from './api';
 
-const useApiState = (transform) => {
-  const raw = useSelector(state => state.api, shallowEqual);
-  return transform(raw);
-}
+// const useApiState = (transform) => {
+//   const raw = useSelector(state => state.api, shallowEqual);
+//   return transform(raw);
+// }
 
-const useApiState2 = (transform, deps) => {
+const useApiState = (transform, deps) => {
   const raw = useSelector((state) => {
     const newState = {
       // _loading: _.pick(state.api._loading, deps),
@@ -35,14 +35,14 @@ const apiList = (state, key) => ({
 });
 const apiShow = (state, key, id) => _.get(state, `${key}.raw.${id}`) || {};
 
-const withApi = (transform) => (WrappedComponent) => {
-  const hocComponent = ({ ...props }) => {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    const raw = useSelector(state => state.api, shallowEqual);
-    return <WrappedComponent {...props} {...transform(raw, props)} />
-  };
-  return hocComponent;
-};
+// const withApi = (transform) => (WrappedComponent) => {
+//   const hocComponent = ({ ...props }) => {
+//     // eslint-disable-next-line react-hooks/rules-of-hooks
+//     const raw = useSelector(state => state.api, shallowEqual);
+//     return <WrappedComponent {...props} {...transform(raw, props)} />
+//   };
+//   return hocComponent;
+// };
 
 // const ListComponent = ({
 const List = ({
@@ -60,7 +60,7 @@ const List = ({
     data,
     pager,
     filter,
-  } = useApiState2((state) => ({
+  } = useApiState((state) => ({
     isLoading: apiLoading(state, 'test.list'),
     data: apiList(state, 'test').list || [],
     pager: apiList(state, 'test').meta || {},
@@ -143,7 +143,7 @@ const Selected = React.memo(({
   const {
     data,
     isLoading,
-  } = useApiState2(state => ({
+  } = useApiState(state => ({
     data: apiShow(state, 'test', id),
     isLoading: apiLoading(state, 'test.show'),
   }), ['test']);
@@ -185,7 +185,7 @@ const Other = React.memo(() => {
   // const { data } = useApiState(state => ({
   //   data: apiGet(state, 'other', {}),
   // }))
-  const { data } = useApiState2(state => ({
+  const { data } = useApiState(state => ({
     data: apiGet(state, 'other', {}),
   }), ['other'])
   const isLoading = useApiLoading('other', 'get');
@@ -228,14 +228,81 @@ function App() {
 }
 
 const Selected2 = () => {
+  const isLoading = false;
+  const updateItem = () => {
+
+  }
+  const data = {};
+  console.log('SHOW 2');
   return (
-    <div>select 2</div>
+    <div>
+      <button disabled={isLoading} onClick={updateItem} type="button">{data.name || '- no selected -'}</button>
+    </div>
   );
 }
 
-const List2 = () => {
+const List2 = ({ onSelectRow }) => {
+  const isLoading = false;
+  const filter = {};
+  const pager = {};
+  const data = [];
+
+  // ====START ACTIONS====
+  const updateList = () => {
+    req.list({
+      key: 'test',
+      url: () => 'https://swapi.co/api/people',
+      params: (state) => {
+        // console.log('<ACTION>', apiGet(state, 'filter', { page: 1 }));
+        return apiGet(state, 'filter', { page: 1 })
+      },
+      transform: (res, state) => {
+        const page = apiGet(state, 'filter', {}).page || 1;
+        return {
+          data: (res.results || []).map((x, i) => ({ ...x, id: (i + 1) + (page * 10) })),
+          meta: {
+            current: page,
+            total: res.count,
+            total_pages: Math.ceil(res.count / 10),
+          },
+        };
+      },
+    });
+  };
+  const handlePrev = () => {
+    req.set('filter', { page: (filter.page || 1) - 1 });
+    updateList();
+  };
+  const handleNext = () => {
+    req.set('filter', { page: (filter.page || 1) + 1 });
+    updateList();
+  };
+  // ====END ACTIONS====
+
+  const handleSelect = row => (e) => {
+    e.preventDefault();
+    onSelectRow(row);
+  }
+
+  React.useEffect(() => {
+    updateList();
+  }, []);
+  console.log('LIST 2');
   return (
-    <div>list 2</div>
+    <div style={{ height: 320 }}>
+      {pager.total_pages > 1 && (
+        <div>
+          <button disabled={isLoading} onClick={handlePrev}>Prev</button>
+          <span>{pager.current}</span>
+          <button disabled={isLoading} onClick={handleNext}>Next</button>
+        </div>
+      )}
+      {data.map((item) => (
+        <div key={item.name}>
+          <a href="/" onClick={handleSelect(item)}>{item.name}</a>
+        </div>
+      ))}
+    </div>
   );
 }
 
