@@ -33,7 +33,7 @@ export const post = ({
 });
 export const gotPost = (doneConstant, options) => res => {
   setTimeout(() => {
-    if (options.onSuccess) options.onSuccess(res);
+    if (options.onSuccess) options.onSuccess(res, store.getState().api);
   }, 50);
   return {
     type: c.GOT_POST,
@@ -57,7 +57,7 @@ export const put = ({
 });
 export const gotPut = (doneConstant, options) => res => {
   setTimeout(() => {
-    if (options.onSuccess) options.onSuccess(res);
+    if (options.onSuccess) options.onSuccess(res, store.getState().api);
   }, 50);
   return {
     type: c.GOT_PUT,
@@ -81,7 +81,7 @@ export const remove = ({
 });
 export const gotRemove = (doneConstant, options) => res => {
   setTimeout(() => {
-    if (options.onSuccess) options.onSuccess(res);
+    if (options.onSuccess) options.onSuccess(res, store.getState().api);
   }, 50);
   return {
     type: c.GOT_REMOVE,
@@ -140,7 +140,7 @@ export const gotList = (key, options) => res => {
     response: options.transform(res.response, store.getState().api)
   } : res;
   setTimeout(() => {
-    if (options.onSuccess) options.onSuccess(newRes);
+    if (options.onSuccess) options.onSuccess(newRes, store.getState().api);
   }, 50);
   return {
     type: c.GOT_LIST,
@@ -150,7 +150,7 @@ export const gotList = (key, options) => res => {
 };
 export const gotSet = (key, options) => res => {
   setTimeout(() => {
-    if (options.onSuccess) options.onSuccess(res);
+    if (options.onSuccess) options.onSuccess(res, store.getState().api);
   }, 50);
   return {
     type: c.GOT_SET,
@@ -163,7 +163,7 @@ export const gotShow = (key, id, options) => res => {
     response: options.transform(res.response, store.getState().api)
   } : res;
   setTimeout(() => {
-    if (options.onSuccess) options.onSuccess(newRes);
+    if (options.onSuccess) options.onSuccess(newRes, store.getState().api);
   }, 50);
   return {
     type: c.GOT_SHOW,
