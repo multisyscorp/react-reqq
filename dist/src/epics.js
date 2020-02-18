@@ -20,8 +20,14 @@ const cancelOngoing = req => {
   return req;
 };
 
+const transformParams = params => {
+  if (typeof params === 'function') return params(store.getState().api);
+  return params;
+};
+
 const checkCache = req => new Promise(resolve => {
-  const _cacheKey = `|${req.url}|${md5(qs(req.options.params))}`;
+  const params = transformParams(_.get(req, 'options.params') || {});
+  const _cacheKey = `|${req.url}|${md5(qs(params))}`;
   store.dispatch({
     type: _cacheKey
   });
@@ -68,7 +74,7 @@ const _list = action$ => action$.pipe(ofType(c.GET_LIST), mergeMap(checkCache), 
     return new Promise(r => r(actions.gotList(key, options)(_cache)));
   }
 
-  return services.get(url, options.params || {}).pipe(map(updateCache(_cacheKey)), map(actions.gotList(key, options)), catchError(actions.gotError(x)), takeUntil(action$.pipe(ofType('CANCEL'))), takeUntil(action$.pipe(ofType(_cacheKey))));
+  return services.get(url, transformParams(options.params || {})).pipe(map(updateCache(_cacheKey)), map(actions.gotList(key, options)), catchError(actions.gotError(x, 'list')), takeUntil(action$.pipe(ofType('CANCEL'))), takeUntil(action$.pipe(ofType(_cacheKey))));
 }));
 
 const _get = action$ => action$.pipe(ofType(c.GET_SET), mergeMap(checkCache), mergeMap(x => {
@@ -84,7 +90,7 @@ const _get = action$ => action$.pipe(ofType(c.GET_SET), mergeMap(checkCache), me
     return new Promise(r => r(actions.gotSet(key, options)(_cache)));
   }
 
-  return services.get(url, options.params || {}).pipe(map(updateCache(_cacheKey)), map(actions.gotSet(key, options)), catchError(actions.gotError(x)), takeUntil(action$.pipe(ofType('CANCEL'))), takeUntil(action$.pipe(ofType(_cacheKey))));
+  return services.get(url, transformParams(options.params || {})).pipe(map(updateCache(_cacheKey)), map(actions.gotSet(key, options)), catchError(actions.gotError(x, 'get')), takeUntil(action$.pipe(ofType('CANCEL'))), takeUntil(action$.pipe(ofType(_cacheKey))));
 }));
 
 const _show = action$ => action$.pipe(ofType(c.GET_SHOW), mergeMap(checkCache), mergeMap(x => {
@@ -101,7 +107,7 @@ const _show = action$ => action$.pipe(ofType(c.GET_SHOW), mergeMap(checkCache), 
     return new Promise(r => r(actions.gotShow(key, id, options)(_cache)));
   }
 
-  return services.get(url, options.params || {}).pipe(map(updateCache(_cacheKey)), map(actions.gotShow(key, id, options)), catchError(actions.gotError(x)), takeUntil(action$.pipe(ofType('CANCEL'))), takeUntil(action$.pipe(ofType(_cacheKey))));
+  return services.get(url, transformParams(options.params || {})).pipe(map(updateCache(_cacheKey)), map(actions.gotShow(key, id, options)), catchError(actions.gotError(x, 'show')), takeUntil(action$.pipe(ofType('CANCEL'))), takeUntil(action$.pipe(ofType(_cacheKey))));
 }));
 
 const _post = action$ => action$.pipe(ofType(c.POST), map(cancelOngoing), mergeMap(x => {
@@ -111,7 +117,7 @@ const _post = action$ => action$.pipe(ofType(c.POST), map(cancelOngoing), mergeM
     payload,
     options
   } = x;
-  return services.post(url, payload || {}).pipe(map(actions.gotPost(key, options)), catchError(actions.gotError(x)), takeUntil(action$.pipe(ofType('CANCEL'))), takeUntil(action$.pipe(ofType(key))));
+  return services.post(url, payload || {}).pipe(map(actions.gotPost(key, options)), catchError(actions.gotError(x, 'post')), takeUntil(action$.pipe(ofType('CANCEL'))), takeUntil(action$.pipe(ofType(key))));
 }));
 
 const _put = action$ => action$.pipe(ofType(c.PUT), map(cancelOngoing), mergeMap(x => {
@@ -121,7 +127,7 @@ const _put = action$ => action$.pipe(ofType(c.PUT), map(cancelOngoing), mergeMap
     payload,
     options
   } = x;
-  return services.put(url, payload || {}).pipe(map(actions.gotPut(key, options)), catchError(actions.gotError(x)), takeUntil(action$.pipe(ofType('CANCEL'))), takeUntil(action$.pipe(ofType(key))));
+  return services.put(url, payload || {}).pipe(map(actions.gotPut(key, options)), catchError(actions.gotError(x, 'put')), takeUntil(action$.pipe(ofType('CANCEL'))), takeUntil(action$.pipe(ofType(key))));
 }));
 
 const _remove = action$ => action$.pipe(ofType(c.REMOVE), map(cancelOngoing), mergeMap(x => {
@@ -131,7 +137,7 @@ const _remove = action$ => action$.pipe(ofType(c.REMOVE), map(cancelOngoing), me
     payload,
     options
   } = x;
-  return services.remove(url, payload || {}).pipe(map(actions.gotRemove(key, options)), catchError(actions.gotError(x)), takeUntil(action$.pipe(ofType('CANCEL'))), takeUntil(action$.pipe(ofType(key))));
+  return services.remove(url, payload || {}).pipe(map(actions.gotRemove(key, options)), catchError(actions.gotError(x, 'remove')), takeUntil(action$.pipe(ofType('CANCEL'))), takeUntil(action$.pipe(ofType(key))));
 }));
 
 export default combineEpics(_list, _show, _get, _post, _put, _remove);

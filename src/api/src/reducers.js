@@ -2,9 +2,7 @@
 import _ from 'lodash';
 import * as c from './constants';
 
-export const apiInitState = {
-  _loading: {},
-};
+export const apiInitState = {};
 
 // FOR JSON API
 export const transformIncluded = (x, included) => {
@@ -49,13 +47,13 @@ const formatList = (state, res) => {
   };
   const data = Array.isArray(res) ? res : (Array.isArray(res.data) ? res.data : []);
   const list = data.map((x) => `${x.id}`); // Object.keys(raw);
-  const pager = _.get(res, 'meta') || state.pager || {};
+  const meta = _.get(res, 'meta') || state.meta || {};
   // .map(k => newRaw[k]);
   return {
     ...state,
     raw: newRaw,
     list,
-    pager,
+    meta,
   };
 };
 
@@ -73,81 +71,22 @@ const formatShow = (state, res) => {
   };
 };
 
-const setStartLoading = (state, { key }, loadKey) => {
-  const load = {
-    ..._.get(state, `_loading.${key}`) || {},
-    [loadKey]: 1,
-  };
+const startLoading = (state, { key }, loadKey) => {
+  const newKey = `LOADING/${loadKey}/${key}`;
   return {
     ...state,
-    _loading: {
-      ...state._loading,
-      [key]: load,
-    },
+    [newKey]: true,
   };
 };
 
-const setEndLoading = (state, { key }, loadKey) => {
-  const load = { ...(_.get(state, `_loading.${key}`) || {}) };
-  delete load[loadKey];
-  return {
-    ...state,
-    _loading: {
-      ...state._loading,
-      [key]: load,
-    },
-  };
-};
-
-const startLoading = (state, { key, id }, loadKey) => {
-  let obj = {};
-  if (id) {
-    const newRaw = _.get(state, `${key}.raw`) || {};
-    newRaw[id] = { ...newRaw[id], _loading: true };
-    obj = { raw: newRaw };
-  }
-  const load = {
-    ..._.get(state, `_loading.${key}`) || {},
-    [loadKey]: 1,
-  };
-  return {
-    ...state,
-    [key]: {
-      ...state[key] || {},
-      ...obj,
-    },
-    _loading: {
-      ...state._loading,
-      [key]: load,
-    },
-  };
-};
-
-const endLoading = (state, { key, id }, loadKey) => {
-  let obj = {};
-  if (id) {
-    const newRaw = _.get(state, `${key}.raw`) || {};
-    newRaw[id] = { ...newRaw[id], _loading: false };
-    obj = { raw: newRaw };
-  }
-  const load = { ...(_.get(state, `_loading.${key}`) || {}) };
-  delete load[loadKey];
-  return {
-    ...state,
-    [key]: {
-      ...state[key] || {},
-      ...obj,
-    },
-    _loading: {
-      ...state._loading,
-      [key]: load,
-    },
-  };
+const endLoading = (state, { key }, loadKey) => {
+  const newKey = `LOADING/${loadKey}/${key}`;
+  return _.omit(state, newKey);
 };
 
 export default {
-  [c.GET_SET]: (state, action) => setStartLoading(state, action, 'get'),
-  [c.GOT_SET]: (state, action) => setEndLoading({
+  [c.GET_SET]: (state, action) => startLoading(state, action, 'get'),
+  [c.GOT_SET]: (state, action) => endLoading({
     ...state,
     [action.key]: action.data,
   }, action, 'get'),
@@ -170,7 +109,7 @@ export default {
       ..._.get(state, `${action.key}`) || {},
       selected: action.id,
     },
-  }, action, action.id),
+  }, action, action.id || 'show'),
   [c.SELECT_ID]: (state, action) => ({
     ...state,
     [action.key]: {
@@ -181,12 +120,7 @@ export default {
   [c.GOT_SHOW]: (state, action) => endLoading({
     ...state,
     [action.key]: formatShow(state[action.key] || {}, action.res),
-  }, action, action.id),
-  [c.GOT_ERROR]: (state, action) => ({
-    ...state,
-    _loading: {
-      ..._.omit(_.get(state, '_loading', {}), [action.key]),
-    },
-  }),
+  }, action, action.id || 'show'),
+  [c.GOT_ERROR]: (state, action) => endLoading(state, action, action.request_type),
   [c.RESET]: () => apiInitState,
 };

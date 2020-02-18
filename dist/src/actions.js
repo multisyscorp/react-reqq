@@ -137,7 +137,7 @@ export const selectId = ({
 });
 export const gotList = (key, options) => res => {
   const newRes = typeof options.transform === 'function' ? { ...res,
-    response: options.transform(res.response)
+    response: options.transform(res.response, store.getState().api)
   } : res;
   setTimeout(() => {
     if (options.onSuccess) options.onSuccess(newRes);
@@ -155,12 +155,12 @@ export const gotSet = (key, options) => res => {
   return {
     type: c.GOT_SET,
     key,
-    data: typeof options.transform === 'function' ? options.transform(res.response) : res.response || {}
+    data: typeof options.transform === 'function' ? options.transform(res.response, store.getState().api) : res.response || {}
   };
 };
 export const gotShow = (key, id, options) => res => {
   const newRes = typeof options.transform === 'function' ? { ...res,
-    response: options.transform(res.response)
+    response: options.transform(res.response, store.getState().api)
   } : res;
   setTimeout(() => {
     if (options.onSuccess) options.onSuccess(newRes);
@@ -175,13 +175,14 @@ export const gotShow = (key, id, options) => res => {
 export const gotError = ({
   key,
   options
-}) => res => new Promise(r => {
+}, request_type) => res => new Promise(r => {
   if (options.onError) options.onError(res);
   SETTINGS.onError(res);
   r({
     type: c.GOT_ERROR,
     key,
-    error: res || {}
+    error: res || {},
+    request_type
   });
 });
 export const reset = () => store.dispatch({

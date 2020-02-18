@@ -27,8 +27,14 @@ const cancelOngoing = (req) => {
   return req;
 };
 
+const transformParams = (params) => {
+  if (typeof params === 'function') return params(store.getState().api);
+  return params;
+}
+
 const checkCache = (req) => new Promise((resolve) => {
-  const _cacheKey = `|${req.url}|${md5(qs(req.options.params))}`;
+  const params = transformParams(_.get(req, 'options.params') || {});
+  const _cacheKey = `|${req.url}|${md5(qs(params))}`;
   store.dispatch({ type: _cacheKey });
   if (_.get(req, 'options.cache')) {
     storage.getItem(_cacheKey, (err, value) => {
@@ -61,11 +67,11 @@ const _list = (action$) => action$
       if (options.cache && !!_cache) {
         return new Promise((r) => r(actions.gotList(key, options)(_cache)));
       }
-      return services.get(url, options.params || {})
+      return services.get(url, transformParams(options.params || {}))
         .pipe(
           map(updateCache(_cacheKey)),
           map(actions.gotList(key, options)),
-          catchError(actions.gotError(x)),
+          catchError(actions.gotError(x, 'list')),
           takeUntil(action$.pipe(ofType('CANCEL'))),
           takeUntil(action$.pipe(ofType(_cacheKey))),
         );
@@ -83,11 +89,11 @@ const _get = (action$) => action$
       if (options.cache && !!_cache) {
         return new Promise((r) => r(actions.gotSet(key, options)(_cache)));
       }
-      return services.get(url, options.params || {})
+      return services.get(url, transformParams(options.params || {}))
         .pipe(
           map(updateCache(_cacheKey)),
           map(actions.gotSet(key, options)),
-          catchError(actions.gotError(x)),
+          catchError(actions.gotError(x, 'get')),
           takeUntil(action$.pipe(ofType('CANCEL'))),
           takeUntil(action$.pipe(ofType(_cacheKey))),
         );
@@ -105,11 +111,11 @@ const _show = (action$) => action$
       if (options.cache && !!_cache) {
         return new Promise((r) => r(actions.gotShow(key, id, options)(_cache)));
       }
-      return services.get(url, options.params || {})
+      return services.get(url, transformParams(options.params || {}))
         .pipe(
           map(updateCache(_cacheKey)),
           map(actions.gotShow(key, id, options)),
-          catchError(actions.gotError(x)),
+          catchError(actions.gotError(x, 'show')),
           takeUntil(action$.pipe(ofType('CANCEL'))),
           takeUntil(action$.pipe(ofType(_cacheKey))),
         );
@@ -127,7 +133,7 @@ const _post = (action$) => action$
       return services.post(url, payload || {})
         .pipe(
           map(actions.gotPost(key, options)),
-          catchError(actions.gotError(x)),
+          catchError(actions.gotError(x, 'post')),
           takeUntil(action$.pipe(ofType('CANCEL'))),
           takeUntil(action$.pipe(ofType(key))),
         );
@@ -145,7 +151,7 @@ const _put = (action$) => action$
       return services.put(url, payload || {})
         .pipe(
           map(actions.gotPut(key, options)),
-          catchError(actions.gotError(x)),
+          catchError(actions.gotError(x, 'put')),
           takeUntil(action$.pipe(ofType('CANCEL'))),
           takeUntil(action$.pipe(ofType(key))),
         );
@@ -163,7 +169,7 @@ const _remove = (action$) => action$
       return services.remove(url, payload || {})
         .pipe(
           map(actions.gotRemove(key, options)),
-          catchError(actions.gotError(x)),
+          catchError(actions.gotError(x, 'remove')),
           takeUntil(action$.pipe(ofType('CANCEL'))),
           takeUntil(action$.pipe(ofType(key))),
         );
