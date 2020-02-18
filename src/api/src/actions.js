@@ -31,7 +31,7 @@ export const post = ({
 });
 
 export const gotPost = (doneConstant, options) => (res) => {
-  setTimeout(() => { if (options.onSuccess) options.onSuccess(res); }, 50);
+  setTimeout(() => { if (options.onSuccess) options.onSuccess(res, store.getState().api); }, 50);
   return {
     type: c.GOT_POST,
     key: doneConstant,
@@ -50,7 +50,7 @@ export const put = ({
 });
 
 export const gotPut = (doneConstant, options) => (res) => {
-  setTimeout(() => { if (options.onSuccess) options.onSuccess(res); }, 50);
+  setTimeout(() => { if (options.onSuccess) options.onSuccess(res, store.getState().api); }, 50);
   return {
     type: c.GOT_PUT,
     key: doneConstant,
@@ -69,7 +69,7 @@ export const remove = ({
 });
 
 export const gotRemove = (doneConstant, options) => (res) => {
-  setTimeout(() => { if (options.onSuccess) options.onSuccess(res); }, 50);
+  setTimeout(() => { if (options.onSuccess) options.onSuccess(res, store.getState().api); }, 50);
   return {
     type: c.GOT_REMOVE,
     key: doneConstant,
@@ -113,7 +113,7 @@ export const gotList = (key, options) => (res) => {
       ...res,
       response: options.transform(res.response, store.getState().api),
     } : res;
-  setTimeout(() => { if (options.onSuccess) options.onSuccess(newRes); }, 50);
+  setTimeout(() => { if (options.onSuccess) options.onSuccess(newRes, store.getState().api); }, 50);
   return {
     type: c.GOT_LIST,
     key,
@@ -122,7 +122,7 @@ export const gotList = (key, options) => (res) => {
 };
 
 export const gotSet = (key, options) => (res) => {
-  setTimeout(() => { if (options.onSuccess) options.onSuccess(res); }, 50);
+  setTimeout(() => { if (options.onSuccess) options.onSuccess(res, store.getState().api); }, 50);
   return {
     type: c.GOT_SET,
     key,
@@ -136,7 +136,7 @@ export const gotShow = (key, id, options) => (res) => {
       ...res,
       response: options.transform(res.response, store.getState().api),
     } : res;
-  setTimeout(() => { if (options.onSuccess) options.onSuccess(newRes); }, 50);
+  setTimeout(() => { if (options.onSuccess) options.onSuccess(newRes, store.getState().api); }, 50);
   return {
     type: c.GOT_SHOW,
     key,
