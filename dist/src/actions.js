@@ -15,7 +15,7 @@ const GET_OPTIONS = {
 export const set = (key, data) => store.dispatch({
   type: c.GOT_SET,
   key,
-  data
+  data: typeof data === 'function' ? data(store.getState().api) : data
 });
 export const post = ({
   key,
