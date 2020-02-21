@@ -41,19 +41,19 @@ const transform = (raw) => {
 
 const formatList = (state, res) => {
   const raw = transform(res);
-  const newRaw = {
-    ...state.raw || {},
-    ...raw,
-  };
-  const data = Array.isArray(res) ? res : (Array.isArray(res.data) ? res.data : []);
-  const list = data.map((x) => `${x.id}`); // Object.keys(raw);
-  const meta = _.get(res, 'meta') || state.meta || {};
-  // .map(k => newRaw[k]);
-  return {
-    ...state,
+  var newRaw = {};
+  _.forOwn(raw, (v, k) => {
+    newRaw[k] = { ..._.get(state, `raw.${k}`) || {}, ...v }
+  });
+  const data = Array.isArray(res) ? res : Array.isArray(res.data) ? res.data : [];
+  const list = data.map(x => `${x.id}`); // Object.keys(raw);
+
+  const meta = _.get(res, 'meta') || state.meta || {}; // .map(k => newRaw[k]);
+
+  return { ...state,
     raw: newRaw,
     list,
-    meta,
+    meta
   };
 };
 
