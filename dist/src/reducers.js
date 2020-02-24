@@ -50,9 +50,15 @@ const transform = raw => {
 
 const formatList = (state, res) => {
   const raw = transform(res);
-  const newRaw = { ...(state.raw || {}),
-    ...raw
+  var newRaw = { ...state.raw
   };
+
+  _.forOwn(raw, (v, k) => {
+    newRaw[k] = { ...(_.get(state, `raw.${k}`) || {}),
+      ...v
+    };
+  });
+
   const data = Array.isArray(res) ? res : Array.isArray(res.data) ? res.data : [];
   const list = data.map(x => `${x.id}`); // Object.keys(raw);
 

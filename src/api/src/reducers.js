@@ -41,7 +41,7 @@ const transform = (raw) => {
 
 const formatList = (state, res) => {
   const raw = transform(res);
-  var newRaw = {};
+  var newRaw = { ...state.raw };
   _.forOwn(raw, (v, k) => {
     newRaw[k] = { ..._.get(state, `raw.${k}`) || {}, ...v }
   });
