@@ -13,6 +13,7 @@ let SETTINGS = {
   endpoint: 'http://127.0.0.1:8000',
   requestHeaders: () => ({}),
   onError: () => {},
+  timeout: 120000,
 };
 
 const store = configureStore();

@@ -16,6 +16,7 @@ export const get = (url, params) => {
     method: 'GET',
     responseType: 'json',
     headers,
+    timeout: SETTINGS.timeout,
   });
 };
 
