@@ -7,7 +7,8 @@ import { useApiLoading, useApiList, useApiShow, useApiGet } from './hooks';
 let SETTINGS = {
   endpoint: 'http://127.0.0.1:8000',
   requestHeaders: () => ({}),
-  onError: () => {}
+  onError: () => {},
+  timeout: 120000
 };
 const store = configureStore();
 

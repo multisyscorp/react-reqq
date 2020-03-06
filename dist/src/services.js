@@ -15,7 +15,8 @@ export const get = (url, params) => {
     url: typeof url === 'function' ? `${url()}${qs(params)}` : `${SETTINGS.endpoint}${url}${qs(params)}`,
     method: 'GET',
     responseType: 'json',
-    headers
+    headers,
+    timeout: SETTINGS.timeout
   });
 };
 export const post = (url, payload) => {
