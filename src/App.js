@@ -199,6 +199,10 @@ const Other = React.memo(() => {
     req.get({
       key: 'other',
       url: () => `https://swapi.co/api/people/${getRandomInt(1, 87)}`,
+      headers: (headers) => ({
+        ...headers,
+        override: 'WOW HEADERS',
+      })
     });
   };
   console.log('OTHER');

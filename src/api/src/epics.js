@@ -67,7 +67,7 @@ const _list = (action$) => action$
       if (options.cache && !!_cache) {
         return new Promise((r) => r(actions.gotList(key, options)(_cache)));
       }
-      return services.get(url, transformParams(options.params || {}))
+      return services.get(url, transformParams(options.params || {}), options.headers || {})
         .pipe(
           map(updateCache(_cacheKey)),
           map(actions.gotList(key, options)),
@@ -89,7 +89,7 @@ const _get = (action$) => action$
       if (options.cache && !!_cache) {
         return new Promise((r) => r(actions.gotSet(key, options)(_cache)));
       }
-      return services.get(url, transformParams(options.params || {}))
+      return services.get(url, transformParams(options.params || {}), options.headers || {})
         .pipe(
           map(updateCache(_cacheKey)),
           map(actions.gotSet(key, options)),
@@ -111,7 +111,7 @@ const _show = (action$) => action$
       if (options.cache && !!_cache) {
         return new Promise((r) => r(actions.gotShow(key, id, options)(_cache)));
       }
-      return services.get(url, transformParams(options.params || {}))
+      return services.get(url, transformParams(options.params || {}), options.headers || {})
         .pipe(
           map(updateCache(_cacheKey)),
           map(actions.gotShow(key, id, options)),
@@ -130,7 +130,7 @@ const _post = (action$) => action$
       const {
         key, url, payload, options,
       } = x;
-      return services.post(url, payload || {})
+      return services.post(url, payload || {}, options.headers || {})
         .pipe(
           map(actions.gotPost(key, options)),
           catchError(actions.gotError(x, 'post')),
@@ -148,7 +148,7 @@ const _put = (action$) => action$
       const {
         key, url, payload, options,
       } = x;
-      return services.put(url, payload || {})
+      return services.put(url, payload || {}, options.headers || {})
         .pipe(
           map(actions.gotPut(key, options)),
           catchError(actions.gotError(x, 'put')),
@@ -166,7 +166,7 @@ const _remove = (action$) => action$
       const {
         key, url, payload, options,
       } = x;
-      return services.remove(url, payload || {})
+      return services.remove(url, payload || {}, options.headers || {})
         .pipe(
           map(actions.gotRemove(key, options)),
           catchError(actions.gotError(x, 'remove')),
