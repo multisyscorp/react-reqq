@@ -25,7 +25,7 @@ export const get = (url, params, headers) => {
 export const post = (url, payload, headers) => {
   const newHeaders = typeof headers === 'function'
     ? headers({ ...DEFAULT_HEADER, ...SETTINGS.requestHeaders() })
-    : { ...DEFAULT_HEADER, ...SETTINGS.requestHeaders(), headers };
+    : { ...DEFAULT_HEADER, ...SETTINGS.requestHeaders(), ...headers };
   return rxAjax({
     url: typeof url === 'function' ? url() : `${SETTINGS.endpoint}${url}`,
     method: 'POST',
@@ -40,7 +40,7 @@ export const post = (url, payload, headers) => {
 export const put = (url, payload, headers) => {
   const newHeaders = typeof headers === 'function'
     ? headers({ ...DEFAULT_HEADER, ...SETTINGS.requestHeaders() })
-    : { ...DEFAULT_HEADER, ...SETTINGS.requestHeaders(), headers };
+    : { ...DEFAULT_HEADER, ...SETTINGS.requestHeaders(), ...headers };
   return rxAjax({
     url: typeof url === 'function' ? url() : `${SETTINGS.endpoint}${url}`,
     method: 'PUT',
@@ -55,7 +55,7 @@ export const put = (url, payload, headers) => {
 export const remove = (url, payload = {}, headers) => {
   const newHeaders = typeof headers === 'function'
     ? headers({ ...DEFAULT_HEADER, ...SETTINGS.requestHeaders() })
-    : { ...DEFAULT_HEADER, ...SETTINGS.requestHeaders(), headers };
+    : { ...DEFAULT_HEADER, ...SETTINGS.requestHeaders(), ...headers };
   return rxAjax({
     url: typeof url === 'function' ? url() : `${SETTINGS.endpoint}${url}`,
     method: 'DELETE',
