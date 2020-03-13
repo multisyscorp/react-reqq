@@ -27,7 +27,7 @@ export const post = (url, payload, headers) => {
     ...SETTINGS.requestHeaders()
   }) : { ...DEFAULT_HEADER,
     ...SETTINGS.requestHeaders(),
-    headers
+    ...headers
   };
   return rxAjax({
     url: typeof url === 'function' ? url() : `${SETTINGS.endpoint}${url}`,
@@ -43,7 +43,7 @@ export const put = (url, payload, headers) => {
     ...SETTINGS.requestHeaders()
   }) : { ...DEFAULT_HEADER,
     ...SETTINGS.requestHeaders(),
-    headers
+    ...headers
   };
   return rxAjax({
     url: typeof url === 'function' ? url() : `${SETTINGS.endpoint}${url}`,
@@ -59,7 +59,7 @@ export const remove = (url, payload = {}, headers) => {
     ...SETTINGS.requestHeaders()
   }) : { ...DEFAULT_HEADER,
     ...SETTINGS.requestHeaders(),
-    headers
+    ...headers
   };
   return rxAjax({
     url: typeof url === 'function' ? url() : `${SETTINGS.endpoint}${url}`,
