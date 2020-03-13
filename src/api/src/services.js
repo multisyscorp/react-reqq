@@ -12,7 +12,7 @@ const DEFAULT_HEADER = {
 export const get = (url, params, headers) => {
   const newHeaders = typeof headers === 'function'
     ? headers({ ...DEFAULT_HEADER, ...SETTINGS.requestHeaders() })
-    : { ...DEFAULT_HEADER, ...SETTINGS.requestHeaders(), headers };
+    : { ...DEFAULT_HEADER, ...SETTINGS.requestHeaders(), ...headers };
   return rxAjax({
     url: typeof url === 'function' ? `${url()}${qs(params)}` : `${SETTINGS.endpoint}${url}${qs(params)}`,
     method: 'GET',

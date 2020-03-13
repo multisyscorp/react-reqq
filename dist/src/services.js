@@ -12,7 +12,7 @@ export const get = (url, params, headers) => {
     ...SETTINGS.requestHeaders()
   }) : { ...DEFAULT_HEADER,
     ...SETTINGS.requestHeaders(),
-    headers
+    ...headers
   };
   return rxAjax({
     url: typeof url === 'function' ? `${url()}${qs(params)}` : `${SETTINGS.endpoint}${url}${qs(params)}`,

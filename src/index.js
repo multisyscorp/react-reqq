@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import App2 from './App';
+// import App2 from './App';
 import * as serviceWorker from './serviceWorker';
 import { Provider } from 'react-redux';
 import { configureApi, req } from './api';
@@ -29,7 +29,10 @@ const App = () => {
     console.log('call this');
     req.get({
       key: 'LOAD_THIS',
-      url: () => 'http://localhost:8000',
+      url: () => 'http://localhost:8000/foo',
+      headers: {
+        foo: 'asd',
+      },
     });
   }, []);
   return (
@@ -40,7 +43,7 @@ const App = () => {
 ReactDOM.render(
   <Provider store={store}>
     <App />
-    <App2 />
+    {/* <App2 /> */}
   </Provider>
 , document.getElementById('root'));
 
