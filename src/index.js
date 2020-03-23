@@ -29,10 +29,16 @@ const App = () => {
     console.log('call this');
     req.get({
       key: 'LOAD_THIS',
-      url: () => 'http://localhost:8000/foo',
-      headers: {
-        foo: 'asd',
+      url: () => 'https://coronavirus-tracker-api.herokuapp.com/v2/locations',
+      // url: () => 'https://swapi.co/api/people/1',
+      // headers: {
+      //   foo: 'asd',
+      // },
+      transform: (res) => {
+        console.log('response', res);
+        return res;
       },
+      cache: true,
     });
   }, []);
   return (
