@@ -27,7 +27,9 @@ const transformParams = params => {
 
 const checkCache = req => new Promise(resolve => {
   const params = transformParams(_.get(req, 'options.params') || {});
-  const _cacheKey = `|${req.url}|${md5(qs(params))}`;
+
+  const _cacheKey = md5(`${typeof req.url === 'function' ? req.url() : req.url}${qs(params)}`);
+
   store.dispatch({
     type: _cacheKey
   });
@@ -54,7 +56,7 @@ const checkCache = req => new Promise(resolve => {
 });
 
 const updateCache = _cacheKey => req => {
-  if (req.status === 200 && !_.isEmpty(_.get(req, 'response.data', ''))) {
+  if (req.status === 200 && !_.isEmpty(_.get(req, 'response', ''))) {
     storage.setItem(_cacheKey, req);
   }
 
