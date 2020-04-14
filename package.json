@@ -1,6 +1,6 @@
 {
   "name": "react-reqq",
-  "version": "0.3.55",
+  "version": "0.3.56",
   "private": false,
   "main": "dist/index.js",
   "babel": {
