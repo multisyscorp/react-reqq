@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useSelector, shallowEqual } from 'react-redux';
 import _ from 'lodash';
 
@@ -22,6 +23,7 @@ export const useApiShow = (key, id) => {
 };
 
 export const useApiGet = (key, default_value = {}) => {
-  const selected = useSelector((state) => _.get(state, `api.${key}`) || default_value, shallowEqual);
+  const [defaultValue] = useState(default_value);
+  const selected = useSelector((state) => _.get(state, `api.${key}`) || defaultValue, shallowEqual);
   return selected;
 };

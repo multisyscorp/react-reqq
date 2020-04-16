@@ -4,7 +4,7 @@ import './index.css';
 // import App2 from './App';
 import * as serviceWorker from './serviceWorker';
 import { Provider } from 'react-redux';
-import { configureApi, req } from './api';
+import { configureApi, req, useApiGet } from './api';
 
 const c = {
   FOO1: 'CONSTANT_1',
@@ -25,6 +25,7 @@ export const store = configureApi({
 });
 
 const App = () => {
+  const [counter, setCounter] = React.useState(0);
   React.useEffect(() => {
     console.log('call this');
     req.get({
@@ -41,8 +42,15 @@ const App = () => {
       cache: true,
     });
   }, []);
+  const a = useApiGet('FOO', {});
+  React.useEffect(() => {
+    console.log('changed!', a);
+  }, [a]);
   return (
-    <div>SAMPLE THIS</div>
+    <div>
+      SAMPLE THIS
+    <button onClick={() => setCounter(counter + 1)} type="button">{counter}</button>
+    </div>
   )
 };
 
