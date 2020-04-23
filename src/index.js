@@ -39,8 +39,11 @@ const App = () => {
         console.log('response', res);
         return res;
       },
-      cache: true,
+      cache: false,
     });
+    setTimeout(() => {
+      req.cancelAll();
+    }, 500);
   }, []);
   const a = useApiGet('FOO', {});
   React.useEffect(() => {
@@ -48,7 +51,7 @@ const App = () => {
   }, [a]);
   return (
     <div>
-      SAMPLE THIS
+      SAMPLE THISS
     <button onClick={() => setCounter(counter + 1)} type="button">{counter}</button>
     </div>
   )

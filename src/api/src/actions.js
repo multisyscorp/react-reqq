@@ -157,3 +157,5 @@ export const gotError = ({ key, options }, request_type) => (res) => new Promise
 });
 
 export const reset = () => store.dispatch({ type: c.RESET });
+
+export const cancelAll = () => store.dispatch({ type: 'CANCEL' });

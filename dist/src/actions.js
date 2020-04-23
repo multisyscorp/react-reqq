@@ -188,3 +188,6 @@ export const gotError = ({
 export const reset = () => store.dispatch({
   type: c.RESET
 });
+export const cancelAll = () => store.dispatch({
+  type: 'CANCEL'
+});
