@@ -34,9 +34,12 @@ const transformParams = (params) => {
 
 const checkCache = (req) => new Promise((resolve) => {
   const params = transformParams(_.get(req, 'options.params') || {});
-  const _cacheKey = md5(`${typeof req.url === 'function' ? req.url() : req.url}${qs(params)}`);
+  const key = _.get(req, 'options.cacheKey') || `${typeof req.url === 'function' ? req.url() : req.url}${qs(params)}`
+  const isCached = _.get(req, 'options.cache');
+  const _cacheKey = isCached ? md5(key) : false;
   store.dispatch({ type: _cacheKey });
-  if (_.get(req, 'options.cache')) {
+  if (isCached) {
+    // console.log('GET CACHE!', _cacheKey);
     storage.getItem(_cacheKey, (err, value) => {
       if (err) resolve({ ...req, _cacheKey });
       resolve({ ...req, _cacheKey, _cache: value });
@@ -50,7 +53,8 @@ const checkCache = (req) => new Promise((resolve) => {
 });
 
 const updateCache = (_cacheKey) => (req) => {
-  if (req.status === 200 && !_.isEmpty(_.get(req, 'response', ''))) {
+  if (_cacheKey && req.status === 200 && !_.isEmpty(_.get(req, 'response', ''))) {
+    // console.log('SET CACHE!');
     storage.setItem(_cacheKey, req);
   }
   return req;
@@ -89,6 +93,7 @@ const _get = (action$) => action$
       if (options.cache && !!_cache) {
         return new Promise((r) => r(actions.gotSet(key, options)(_cache)));
       }
+      console.log('REQUEST!', _cacheKey);
       return services.get(url, transformParams(options.params || {}), options.headers || {})
         .pipe(
           map(updateCache(_cacheKey)),

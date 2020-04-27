@@ -24,13 +24,16 @@ export const store = configureApi({
   },
 });
 
+const wait = t => new Promise(r => setTimeout(r, t));
+
 const App = () => {
   const [counter, setCounter] = React.useState(0);
-  React.useEffect(() => {
+  const init = async () => {
     console.log('call this');
     req.get({
       key: 'LOAD_THIS',
       url: () => 'https://coronavirus-tracker-api.herokuapp.com/v2/locations',
+      params: { q: 1 },
       // url: () => 'https://swapi.co/api/people/1',
       // headers: {
       //   foo: 'asd',
@@ -39,11 +42,31 @@ const App = () => {
         console.log('response', res);
         return res;
       },
-      cache: false,
+      cacheKey: 'asda',
+      cache: true,
     });
-    setTimeout(() => {
-      req.cancelAll();
-    }, 500);
+    await wait(200);
+    req.get({
+      key: 'LOAD_THIS',
+      url: () => 'https://coronavirus-tracker-api.herokuapp.com/v2/locations',
+      params: { q: 2 },
+      // url: () => 'https://swapi.co/api/people/1',
+      // headers: {
+      //   foo: 'asd',
+      // },
+      transform: (res) => {
+        console.log('response', res);
+        return res;
+      },
+      cacheKey: 'asda',
+      cache: true,
+    });
+    // setTimeout(() => {
+    //   req.cancelAll();
+    // }, 500);
+  }
+  React.useEffect(() => {
+    init();
   }, []);
   const a = useApiGet('FOO', {});
   React.useEffect(() => {
