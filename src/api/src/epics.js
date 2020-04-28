@@ -11,16 +11,12 @@ import {
   takeUntil,
 } from 'rxjs/operators';
 import md5 from 'md5';
-import storage from 'localforage';
+import storage from '../cache-storage';
 import { store } from '../index';
 import * as actions from './actions';
 import * as c from './constants';
 import { qs } from './helpers';
 import * as services from './services';
-
-storage.config({
-  driver: storage.LOCALSTORAGE,
-});
 
 const cancelOngoing = (req) => {
   store.dispatch({ type: req.key });
@@ -34,9 +30,9 @@ const transformParams = (params) => {
 
 const checkCache = (req) => new Promise((resolve) => {
   const params = transformParams(_.get(req, 'options.params') || {});
-  const key = _.get(req, 'options.cacheKey') || `${typeof req.url === 'function' ? req.url() : req.url}${qs(params)}`
+  const key = md5(_.get(req, 'options.cacheKey') || `${typeof req.url === 'function' ? req.url() : req.url}${qs(params)}`)
   const isCached = _.get(req, 'options.cache');
-  const _cacheKey = isCached ? md5(key) : false;
+  const _cacheKey = isCached ? key : false;
   store.dispatch({ type: _cacheKey });
   if (isCached) {
     // console.log('GET CACHE!', _cacheKey);
@@ -47,7 +43,7 @@ const checkCache = (req) => new Promise((resolve) => {
     return;
   }
   storage.keys().then((k) => {
-    k.filter((x) => x.indexOf(`|${req.url}|`) > -1).map((y) => storage.removeItem(y));
+    k.filter((x) => x.indexOf(key) > -1).map((y) => storage.removeItem(y));
     resolve({ ...req, _cacheKey });
   });
 });
@@ -93,7 +89,6 @@ const _get = (action$) => action$
       if (options.cache && !!_cache) {
         return new Promise((r) => r(actions.gotSet(key, options)(_cache)));
       }
-      console.log('REQUEST!', _cacheKey);
       return services.get(url, transformParams(options.params || {}), options.headers || {})
         .pipe(
           map(updateCache(_cacheKey)),

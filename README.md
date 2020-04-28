@@ -4,6 +4,20 @@ Easy redux setup for react.
 ### `yarn add react-reqq`
 *its not a typo, its just thicc*
 
+#### Feature Logs:
+#### 0.3.7
+* Added `cacheStorage` option in configureApi
+  * INDEXEDDB (buggy)
+  * LOCALSTORAGE
+  * WEBSQL
+* Added `clearCache()` function in `req`
+* Added `cacheKey` option in `get`, `list` and `show`
+#### 0.3.6
+* Added `cancelAll()` function in `req`
+#### 0.3.X
+* Added Header override
+* *Added transform state
+
 ## Setup
 ### Provider Setup
 ~~~~
@@ -159,7 +173,3 @@ Use `.list`+`.show` for data with `id`, `.show` updates the `.list` item if `id`
     cache: true,
   });
 ~~~~
-
-Change Logs:
--Added Header override
--Added transform state

@@ -22,6 +22,7 @@ export const store = configureApi({
     [c.FOO2]: c.FOO2_INIT_VALUE,
     [c.FOO3]: c.FOO3_INIT_VALUE,
   },
+  // cacheStorage: 'INDEXEDDB',
 });
 
 const wait = t => new Promise(r => setTimeout(r, t));
@@ -75,7 +76,10 @@ const App = () => {
   return (
     <div>
       SAMPLE THISS
-    <button onClick={() => setCounter(counter + 1)} type="button">{counter}</button>
+      <button onClick={() => setCounter(counter + 1)} type="button">{counter}</button>
+      <button onClick={() => {
+        req.clearCache();
+      }} type="button">CLEAR CACHE</button>
     </div>
   )
 };

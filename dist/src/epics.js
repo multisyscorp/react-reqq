@@ -3,15 +3,12 @@ import { combineEpics, ofType } from 'redux-observable';
 import _ from 'lodash';
 import { map, mergeMap, catchError, takeUntil } from 'rxjs/operators';
 import md5 from 'md5';
-import storage from 'localforage';
+import storage from '../cache-storage';
 import { store } from '../index';
 import * as actions from './actions';
 import * as c from './constants';
 import { qs } from './helpers';
 import * as services from './services';
-storage.config({
-  driver: storage.LOCALSTORAGE
-});
 
 const cancelOngoing = req => {
   store.dispatch({
@@ -27,14 +24,18 @@ const transformParams = params => {
 
 const checkCache = req => new Promise(resolve => {
   const params = transformParams(_.get(req, 'options.params') || {});
+  const key = md5(_.get(req, 'options.cacheKey') || `${typeof req.url === 'function' ? req.url() : req.url}${qs(params)}`);
 
-  const _cacheKey = md5(`${typeof req.url === 'function' ? req.url() : req.url}${qs(params)}`);
+  const isCached = _.get(req, 'options.cache');
+
+  const _cacheKey = isCached ? key : false;
 
   store.dispatch({
     type: _cacheKey
   });
 
-  if (_.get(req, 'options.cache')) {
+  if (isCached) {
+    // console.log('GET CACHE!', _cacheKey);
     storage.getItem(_cacheKey, (err, value) => {
       if (err) resolve({ ...req,
         _cacheKey
@@ -48,7 +49,7 @@ const checkCache = req => new Promise(resolve => {
   }
 
   storage.keys().then(k => {
-    k.filter(x => x.indexOf(`|${req.url}|`) > -1).map(y => storage.removeItem(y));
+    k.filter(x => x.indexOf(key) > -1).map(y => storage.removeItem(y));
     resolve({ ...req,
       _cacheKey
     });
@@ -56,7 +57,8 @@ const checkCache = req => new Promise(resolve => {
 });
 
 const updateCache = _cacheKey => req => {
-  if (req.status === 200 && !_.isEmpty(_.get(req, 'response', ''))) {
+  if (_cacheKey && req.status === 200 && !_.isEmpty(_.get(req, 'response', ''))) {
+    // console.log('SET CACHE!');
     storage.setItem(_cacheKey, req);
   }
 

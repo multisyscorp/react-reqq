@@ -1,6 +1,7 @@
 /* eslint-disable import/no-cycle */
 import { SETTINGS, store } from '../index';
 import * as c from './constants';
+import storage from '../cache-storage';
 
 const SET_OPTIONS = {
   onSuccess: () => {},
@@ -159,3 +160,5 @@ export const gotError = ({ key, options }, request_type) => (res) => new Promise
 export const reset = () => store.dispatch({ type: c.RESET });
 
 export const cancelAll = () => store.dispatch({ type: 'CANCEL' });
+
+export const clearCache = () => storage.clear();
