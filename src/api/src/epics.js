@@ -30,26 +30,25 @@ const transformParams = (params) => {
 
 const checkCache = (req) => new Promise((resolve) => {
   const params = transformParams(_.get(req, 'options.params') || {});
-  const key = md5(_.get(req, 'options.cacheKey') || `${typeof req.url === 'function' ? req.url() : req.url}${qs(params)}`)
-  const isCached = _.get(req, 'options.cache');
-  const _cacheKey = isCached ? key : false;
+  const _cacheKey = md5(_.get(req, 'options.cacheKey') || `${typeof req.url === 'function' ? req.url() : req.url}${qs(params)}`)
+  const _isCacheEnabled = _.get(req, 'options.cache');
   store.dispatch({ type: _cacheKey });
-  if (isCached) {
+  if (_isCacheEnabled) {
     // console.log('GET CACHE!', _cacheKey);
     storage.getItem(_cacheKey, (err, value) => {
-      if (err) resolve({ ...req, _cacheKey });
-      resolve({ ...req, _cacheKey, _cache: value });
+      if (err) resolve({ ...req, _cacheKey, _isCacheEnabled });
+      resolve({ ...req, _cacheKey, _isCacheEnabled, _cache: value });
     });
     return;
   }
   storage.keys().then((k) => {
-    k.filter((x) => x.indexOf(key) > -1).map((y) => storage.removeItem(y));
-    resolve({ ...req, _cacheKey });
+    k.filter((x) => x.indexOf(_cacheKey) > -1).map((y) => storage.removeItem(y));
+    resolve({ ...req, _cacheKey, _isCacheEnabled });
   });
 });
 
-const updateCache = (_cacheKey) => (req) => {
-  if (_cacheKey && req.status === 200 && !_.isEmpty(_.get(req, 'response', ''))) {
+const updateCache = (_isCacheEnabled, _cacheKey) => (req) => {
+  if (_isCacheEnabled && req.status === 200 && !_.isEmpty(_.get(req, 'response', ''))) {
     // console.log('SET CACHE!');
     storage.setItem(_cacheKey, req);
   }
@@ -62,14 +61,14 @@ const _list = (action$) => action$
     mergeMap(checkCache),
     mergeMap((x) => {
       const {
-        key, url, options, _cache, _cacheKey,
+        key, url, options, _cache, _cacheKey, _isCacheEnabled,
       } = x;
       if (options.cache && !!_cache) {
         return new Promise((r) => r(actions.gotList(key, options)(_cache)));
       }
       return services.get(url, transformParams(options.params || {}), options.headers || {})
         .pipe(
-          map(updateCache(_cacheKey)),
+          map(updateCache(_isCacheEnabled, _cacheKey)),
           map(actions.gotList(key, options)),
           catchError(actions.gotError(x, 'list')),
           takeUntil(action$.pipe(ofType('CANCEL'))),
@@ -84,14 +83,14 @@ const _get = (action$) => action$
     mergeMap(checkCache),
     mergeMap((x) => {
       const {
-        key, url, options, _cache, _cacheKey,
+        key, url, options, _cache, _cacheKey, _isCacheEnabled,
       } = x;
       if (options.cache && !!_cache) {
         return new Promise((r) => r(actions.gotSet(key, options)(_cache)));
       }
       return services.get(url, transformParams(options.params || {}), options.headers || {})
         .pipe(
-          map(updateCache(_cacheKey)),
+          map(updateCache(_isCacheEnabled, _cacheKey)),
           map(actions.gotSet(key, options)),
           catchError(actions.gotError(x, 'get')),
           takeUntil(action$.pipe(ofType('CANCEL'))),
@@ -106,14 +105,14 @@ const _show = (action$) => action$
     mergeMap(checkCache),
     mergeMap((x) => {
       const {
-        key, url, id, options, _cache, _cacheKey,
+        key, url, id, options, _cache, _cacheKey, _isCacheEnabled,
       } = x;
       if (options.cache && !!_cache) {
         return new Promise((r) => r(actions.gotShow(key, id, options)(_cache)));
       }
       return services.get(url, transformParams(options.params || {}), options.headers || {})
         .pipe(
-          map(updateCache(_cacheKey)),
+          map(updateCache(_isCacheEnabled, _cacheKey)),
           map(actions.gotShow(key, id, options)),
           catchError(actions.gotError(x, 'show')),
           takeUntil(action$.pipe(ofType('CANCEL'))),
