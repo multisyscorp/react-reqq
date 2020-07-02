@@ -205,7 +205,6 @@ const Other = React.memo(() => {
       })
     });
   };
-  console.log('OTHER');
   return (
     <div>
       <div>{data.name || '-'}</div>
