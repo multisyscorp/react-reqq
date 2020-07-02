@@ -201,7 +201,7 @@ const Other = React.memo(() => {
       url: () => `https://swapi.co/api/people/${getRandomInt(1, 87)}`,
       headers: (headers) => ({
         ...headers,
-        override: 'WOW HEADERS',
+        override: 'TEST HEADERS',
       })
     });
   };
