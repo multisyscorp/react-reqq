@@ -173,3 +173,5 @@ Use `.list`+`.show` for data with `id`, `.show` updates the `.list` item if `id`
     cache: true,
   });
 ~~~~
+
+Powered by Multisys Technologies Corporation
