@@ -79,6 +79,17 @@ req.put({
 });
 ~~~~
 
+### PATCH
+~~~~
+req.patch({
+  key: 'foo',
+  url: '/users/1',
+  payload: {
+    name: 'juan',
+  }
+});
+~~~~
+
 ### REMOVE
 ~~~~
 req.remove({
@@ -117,7 +128,7 @@ import { useApiShow } from 'react-reqq';
 
 const data = useApiShow('foo', '1');
 ~~~~
-useApiLoading(`key`, `get|post|put|remove|list|?id`)
+useApiLoading(`key`, `get|post|put|patch|remove|list|?id`)
 ~~~~
 import { useApiLoading } from 'react-reqq';
 
@@ -147,7 +158,7 @@ Use `.list`+`.show` for data with `id`, `.show` updates the `.list` item if `id`
 * requestHeaders [function] - Set headers on request.
 * onError [function] - When an error occured during request.
 
-#### GET | POST | PUT | REMOVE | LIST | SHOW
+#### GET | POST | PUT | PATCH | REMOVE | LIST | SHOW
 ~~~~
   req.get({
     ...
