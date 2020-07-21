@@ -4,7 +4,7 @@ import './index.css';
 // import App2 from './App';
 import * as serviceWorker from './serviceWorker';
 import { Provider } from 'react-redux';
-import { configureApi, req, useApiGet } from './api';
+import { configureApi, req, useApiGet, useApiLoading } from './api';
 
 const c = {
   FOO1: 'CONSTANT_1',
@@ -73,8 +73,20 @@ const App = () => {
   React.useEffect(() => {
     console.log('changed!', a);
   }, [a]);
+  const handlePatch = () => {
+    req.patch({
+      key: 'PATCH',
+      url: () => 'http://localhost:3000/patch',
+      payload: {
+        hello: 'world',
+      },
+    });
+  }
+  const isPatching = useApiLoading('PATCH', 'patch');
   return (
     <div>
+      <button type="button" onClick={handlePatch} disabled={isPatching}>Sample Patch</button>
+      <hr />
       SAMPLE THISS
       <button onClick={() => setCounter(counter + 1)} type="button">{counter}</button>
       <button onClick={() => {

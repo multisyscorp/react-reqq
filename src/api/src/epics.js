@@ -157,6 +157,24 @@ const _put = (action$) => action$
     }),
   );
 
+const _patch = (action$) => action$
+  .pipe(
+    ofType(c.PATCH),
+    map(cancelOngoing),
+    mergeMap((x) => {
+      const {
+        key, url, payload, options,
+      } = x;
+      return services.patch(url, payload || {}, options.headers || {})
+        .pipe(
+          map(actions.gotPatch(key, options)),
+          catchError(actions.gotError(x, 'patch')),
+          takeUntil(action$.pipe(ofType('CANCEL'))),
+          takeUntil(action$.pipe(ofType(key))),
+        );
+    }),
+  );
+
 const _remove = (action$) => action$
   .pipe(
     ofType(c.REMOVE),
@@ -181,5 +199,6 @@ export default combineEpics(
   _get,
   _post,
   _put,
+  _patch,
   _remove,
 );

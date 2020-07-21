@@ -110,6 +110,8 @@ export default {
   [c.GOT_POST]: (state, action) => endLoading(state, action, 'post'),
   [c.PUT]: (state, action) => startLoading(state, action, 'put'),
   [c.GOT_PUT]: (state, action) => endLoading(state, action, 'put'),
+  [c.PATCH]: (state, action) => startLoading(state, action, 'patch'),
+  [c.GOT_PATCH]: (state, action) => endLoading(state, action, 'patch'),
   [c.REMOVE]: (state, action) => startLoading(state, action, 'remove'),
   [c.GOT_REMOVE]: (state, action) => endLoading(state, action, 'remove'),
   [c.GET_LIST]: (state, action) => startLoading(state, action, 'list'),

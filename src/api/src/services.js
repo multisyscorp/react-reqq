@@ -52,6 +52,21 @@ export const put = (url, payload, headers) => {
   });
 };
 
+export const patch = (url, payload, headers) => {
+  const newHeaders = typeof headers === 'function'
+    ? headers({ ...DEFAULT_HEADER, ...SETTINGS.requestHeaders() })
+    : { ...DEFAULT_HEADER, ...SETTINGS.requestHeaders(), ...headers };
+  return rxAjax({
+    url: typeof url === 'function' ? url() : `${SETTINGS.endpoint}${url}`,
+    method: 'PATCH',
+    responseType: 'json',
+    headers: newHeaders,
+    body: JSON.stringify({
+      ...payload,
+    }),
+  });
+};
+
 export const remove = (url, payload = {}, headers) => {
   const newHeaders = typeof headers === 'function'
     ? headers({ ...DEFAULT_HEADER, ...SETTINGS.requestHeaders() })

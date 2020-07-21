@@ -66,6 +66,30 @@ export const gotPut = (doneConstant, options) => res => {
     data: res.response
   };
 };
+export const patch = ({
+  key,
+  url,
+  payload,
+  ...options
+}) => store.dispatch({
+  type: c.PATCH,
+  key,
+  url,
+  payload,
+  options: { ...SET_OPTIONS,
+    ...options
+  }
+});
+export const gotPatch = (doneConstant, options) => res => {
+  setTimeout(() => {
+    if (options.onSuccess) options.onSuccess(res, store.getState().api);
+  }, 50);
+  return {
+    type: c.GOT_PATCH,
+    key: doneConstant,
+    data: res.response
+  };
+};
 export const remove = ({
   key,
   url,

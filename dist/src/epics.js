@@ -139,6 +139,16 @@ const _put = action$ => action$.pipe(ofType(c.PUT), map(cancelOngoing), mergeMap
   return services.put(url, payload || {}, options.headers || {}).pipe(map(actions.gotPut(key, options)), catchError(actions.gotError(x, 'put')), takeUntil(action$.pipe(ofType('CANCEL'))), takeUntil(action$.pipe(ofType(key))));
 }));
 
+const _patch = action$ => action$.pipe(ofType(c.PATCH), map(cancelOngoing), mergeMap(x => {
+  const {
+    key,
+    url,
+    payload,
+    options
+  } = x;
+  return services.patch(url, payload || {}, options.headers || {}).pipe(map(actions.gotPatch(key, options)), catchError(actions.gotError(x, 'patch')), takeUntil(action$.pipe(ofType('CANCEL'))), takeUntil(action$.pipe(ofType(key))));
+}));
+
 const _remove = action$ => action$.pipe(ofType(c.REMOVE), map(cancelOngoing), mergeMap(x => {
   const {
     key,
@@ -149,4 +159,4 @@ const _remove = action$ => action$.pipe(ofType(c.REMOVE), map(cancelOngoing), me
   return services.remove(url, payload || {}, options.headers || {}).pipe(map(actions.gotRemove(key, options)), catchError(actions.gotError(x, 'remove')), takeUntil(action$.pipe(ofType('CANCEL'))), takeUntil(action$.pipe(ofType(key))));
 }));
 
-export default combineEpics(_list, _show, _get, _post, _put, _remove);
+export default combineEpics(_list, _show, _get, _post, _put, _patch, _remove);
